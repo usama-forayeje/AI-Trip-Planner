@@ -16,8 +16,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { UserCircle, X } from "lucide-react";
+import { Loader, UserCircle, X } from "lucide-react";
 import { useGoogleLogin } from "@react-oauth/google";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "@/service/FirebaseConfig";
+import { useNavigate } from "react-router-dom";
 
 interface Suggestion {
   description: string;
@@ -32,6 +35,9 @@ const CreateTrip: React.FC = () => {
   const [budget, setBudget] = useState<string>("");
   const [travelWith, setTravelWith] = useState<string>("");
   const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  
+  const navigate = useNavigate()
 
   // Handle input change and fetch suggestions from the API
   const handleInputChange = async (
@@ -71,10 +77,10 @@ const CreateTrip: React.FC = () => {
   });
 
   // Handle suggestion click
-  const handleSuggestionClick = (description: string) => {
-    setInput(description); // Set the input to the selected suggestion
-    setSelectedSuggestion(description); // Save the selected suggestion
-    setSuggestions([]); // Clear the suggestion list
+  const handleSuggestionClick = (description: string, place_id?: string) => {
+    setInput(description);
+    setSelectedSuggestion(description);
+    setSuggestions([]);
   };
 
   // Handle form submission
@@ -98,6 +104,7 @@ const CreateTrip: React.FC = () => {
       travelWith,
     };
 
+    setLoading(true);
     const FINAL_PROMPT = AI_PROMPT.replace(
       "{destination}",
       formData.destination
@@ -108,33 +115,62 @@ const CreateTrip: React.FC = () => {
 
     const result = await chatSession.sendMessage(FINAL_PROMPT);
     console.log(result?.response?.text());
+    SaveAiTrip(result?.response?.text(), formData);
     toast("Event has been created.");
+    setLoading(false);
+  };
+
+  const SaveAiTrip = async (TripData, formData) => {
+    setLoading(true);
+    const user = JSON.parse(localStorage.getItem("user"));
+    const docId: string = Date.now().toString();
+  
+    try {
+      await setDoc(doc(db, "AITrips", docId), {
+        userSelections: formData,
+        TripData: JSON.parse(TripData),
+        userEmail: user?.email,
+        id: docId,
+      });
+      toast("Trip saved successfully!");
+    } catch (error) {
+      console.error("Error saving trip:", error);
+      toast("Failed to save trip. Please try again.");
+    } finally {
+      setLoading(false);
+      navigate("/view-trip/"+docId)
+    }
   };
 
   // Fetch user profile after Google login
-  const getUserProfile = (tokenInfo: any) => {
-    axios
-      .get("https://www.googleapis.com/oauth2/v3/userinfo", {
-        headers: {
-          Authorization: `Bearer ${tokenInfo?.access_token}`,
-          Accept: "application/json",
-        },
-      })
-      .then((res) => {
-        localStorage.setItem('user',JSON.stringify(res.data))
-        setOpenDialog(false)
-        handleSubmit()
-      })
-      .catch((err) => {
-        console.log(err); 
-      });
+  const getUserProfile = async (tokenInfo: any) => {
+    try {
+      const res = await axios.get(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
+        {
+          headers: {
+            Authorization: `Bearer ${tokenInfo?.access_token}`,
+            Accept: "application/json",
+          },
+        }
+      );
+      localStorage.setItem("user", JSON.stringify(res.data));
+      setOpenDialog(false);
+      await handleSubmit(); // Ensure it runs after profile is saved
+    } catch (err) {
+      console.error(err);
+      toast("Failed to fetch user profile. Please try again.");
+    }
   };
 
   return (
     <div className="px-5 mt-10 sm:px-10 md:px-32 lg:px-56 xl:px-72">
-      <h2 className="text-3xl font-bold">Tell us your travel preferences 🏕️⛵</h2>
+      <h2 className="text-3xl font-bold">
+        Tell us your travel preferences 🏕️⛵
+      </h2>
       <p className="mt-6 text-xl text-gray-700">
-        Just provide some basic information, and our trip planner will generate a customized itinerary based on your preferences.
+        Just provide some basic information, and our trip planner will generate
+        a customized itinerary based on your preferences.
       </p>
       <div className="flex flex-col gap-6 mt-16">
         {/* Destination Input */}
@@ -154,7 +190,12 @@ const CreateTrip: React.FC = () => {
               <li
                 key={index}
                 className="p-2 cursor-pointer hover:bg-gray-100"
-                onClick={() => handleSuggestionClick(suggestion.description, suggestion.place_id)}
+                onClick={() =>
+                  handleSuggestionClick(
+                    suggestion.description,
+                    suggestion.place_id
+                  )
+                }
               >
                 {suggestion.description}
               </li>
@@ -190,7 +231,9 @@ const CreateTrip: React.FC = () => {
               <div
                 key={item.id}
                 onClick={() => setBudget(item.title)}
-                className={`p-6 mb-3 border rounded-lg cursor-pointer hover:shadow-lg ${budget === item.title ? "border-blue-500" : ""}`}
+                className={`p-6 mb-3 border rounded-lg cursor-pointer hover:shadow-lg ${
+                  budget === item.title ? "border-blue-500" : ""
+                }`}
               >
                 <h2 className="text-4xl">{item.icon}</h2>
                 <h3 className="text-lg font-bold">{item.title}</h3>
@@ -210,7 +253,9 @@ const CreateTrip: React.FC = () => {
               <div
                 key={item.id}
                 onClick={() => setTravelWith(item.title)}
-                className={`p-6 mb-3 border rounded-lg cursor-pointer hover:shadow-lg ${travelWith === item.title ? "border-blue-500" : ""}`}
+                className={`p-6 mb-3 border rounded-lg cursor-pointer hover:shadow-lg ${
+                  travelWith === item.title ? "border-blue-500" : ""
+                }`}
               >
                 <h2 className="text-4xl">{item.icon}</h2>
                 <h3 className="text-lg font-bold">{item.title}</h3>
@@ -222,7 +267,16 @@ const CreateTrip: React.FC = () => {
 
         {/* Submit Button */}
         <div className="flex justify-end my-10">
-          <Button onClick={handleSubmit}>Generate Trip</Button>
+          <Button
+            disabled={loading} // Disable button during loading
+            onClick={handleSubmit}
+          >
+            {loading ? (
+              <Loader className="w-7 h-7 animate-spin" />
+            ) : (
+              "Generate Trip"
+            )}
+          </Button>
         </div>
       </div>
 
@@ -253,7 +307,8 @@ const CreateTrip: React.FC = () => {
           </DialogHeader>
 
           <DialogDescription className="mt-2 text-sm text-center text-muted-foreground">
-            Sign in to access personalized trip plans, itinerary suggestions, and more. Your account is safe and secure.
+            Sign in to access personalized trip plans, itinerary suggestions,
+            and more. Your account is safe and secure.
           </DialogDescription>
 
           <div className="mt-6">
