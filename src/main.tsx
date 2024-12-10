@@ -19,7 +19,7 @@ const router = createBrowserRouter([
     element: <CreateTrip/>
   },
   {
-    path: "/view-trip/:tripId",
+    path: "/view-trip/:id",
     element: <ViewTrip/>
   }
 ])

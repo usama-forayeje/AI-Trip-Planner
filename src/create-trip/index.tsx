@@ -122,25 +122,37 @@ const CreateTrip: React.FC = () => {
 
   const SaveAiTrip = async (TripData, formData) => {
     setLoading(true);
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
     const docId: string = Date.now().toString();
+    
+    let parsedTripData;
+    try {
+      parsedTripData = JSON.parse(TripData);
+    } catch (error) {
+      console.error("Failed to parse TripData:", error);
+      toast("Invalid trip data.");
+      setLoading(false);
+      return;
+    }
   
     try {
       await setDoc(doc(db, "AITrips", docId), {
         userSelections: formData,
-        TripData: JSON.parse(TripData),
+        TripData: parsedTripData,
         userEmail: user?.email,
         id: docId,
       });
       toast("Trip saved successfully!");
+      console.log("Redirecting to:", "/view-trip/" + docId);
+      navigate("/view-trip/" + docId);
     } catch (error) {
       console.error("Error saving trip:", error);
-      toast("Failed to save trip. Please try again.");
+      toast("Failed to save trip.");
     } finally {
       setLoading(false);
-      navigate("/view-trip/"+docId)
     }
   };
+  
 
   // Fetch user profile after Google login
   const getUserProfile = async (tokenInfo: any) => {
