@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
 import InfoSection from "../components/InfoSection";
+import Hotels from "../components/Hotels";
+import PlacesToVisit from "../components/PlacesToVisit";
 
 interface TripData {
     userSelections: {
@@ -49,9 +51,9 @@ function ViewTrip() {
             {/* Information Section */}
                 <InfoSection tripData={tripData}/>
             {/* Recommended Hotels */}
-
+                <Hotels tripData={tripData} />
             {/* Daily Plane */}
-
+                <PlacesToVisit tripData={tripData} />
             {/* Footer */}
         </div>
     );
