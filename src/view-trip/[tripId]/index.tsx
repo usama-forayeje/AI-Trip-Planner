@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import InfoSection from "../components/InfoSection";
 import Hotels from "../components/Hotels";
 import PlacesToVisit from "../components/PlacesToVisit";
+import Footer from "../components/Footer";
 
 interface TripData {
     userSelections: {
@@ -55,6 +56,7 @@ function ViewTrip() {
             {/* Daily Plane */}
                 <PlacesToVisit tripData={tripData} />
             {/* Footer */}
+            <Footer/>
         </div>
     );
 }
