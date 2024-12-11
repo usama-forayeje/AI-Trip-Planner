@@ -8,6 +8,7 @@ import Hotels from "../components/Hotels";
 import PlacesToVisit from "../components/PlacesToVisit";
 import Footer from "../components/Footer";
 
+// Correcting type definitions for the trip data
 interface UserSelections {
   destination: string;
   days: number;
@@ -32,13 +33,13 @@ interface Hotel {
   hotelAddress: string;
   image: string;
   priceRange: string;
-  rating: string;
+  rating: number;  // Changed rating to number
 }
 
 interface TripData {
   userSelections: UserSelections;
   itinerary: Record<string, ItineraryDay[]>; // Ensure this is a Record with itinerary data
-  hotels: Hotel[]; // Correctly defined Hotel[] type
+  hotels: Hotel[];
   userEmail: string;
   id: string;
 }
