@@ -111,7 +111,7 @@ function Header() {
               <PopoverTrigger>
                 <img
                   className="rounded-full cursor-pointer w-9 h-9"
-                  src={user?.picture}
+                  src={user.picture} // Updated to use non-optional chaining
                   alt="profile"
                 />
               </PopoverTrigger>
@@ -131,7 +131,7 @@ function Header() {
       </div>
 
       {/* Login Dialog */}
-      <Dialog open={openDialog}>
+      <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogContent className="max-w-md">
           <button
             onClick={() => setOpenDialog(false)}

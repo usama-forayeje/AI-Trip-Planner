@@ -27,18 +27,18 @@ interface ItineraryDay {
   };
 }
 
+interface Hotel {
+  hotelName: string;
+  hotelAddress: string;
+  image: string;
+  priceRange: string;
+  rating: string;
+}
+
 interface TripData {
   userSelections: UserSelections;
-  TripData: {
-    itinerary: Record<string, ItineraryDay[]>;
-    hotels: {
-      hotelName: string;
-      hotelAddress: string;
-      image: string;
-      priceRange: string;
-      rating: string;
-    }[];
-  };
+  itinerary: Record<string, ItineraryDay[]>; // Ensure this is a Record with itinerary data
+  hotels: Hotel[]; // Correctly defined Hotel[] type
   userEmail: string;
   id: string;
 }
