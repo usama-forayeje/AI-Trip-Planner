@@ -75,8 +75,43 @@ export  const SelectBudgetList: BudgetItem[] = [
   ];
 
 
-  export const AI_PROMPT = `generate a travel plan from location: {destination} Las Vegas, for {days} for {travelWith} with a {budget} budget,
-  give me hotel options with hotel name , hotel address , price , hotel image URL and geo coordinates
-  rating , descriptions and suggest itinerary with place name , place details , place image URL , 
-  Geocoordinates, ticket pricing, and time travel each of the location for of the 3 days with each day plan with best time to visit in json format`;
-  
+  export const AI_PROMPT = 
+  `
+  Generate a Travel plan for location: {destination}  {days} travel plan for a {travelWith} visiting {destination} on a {budget}. Provide the following for each hotel option and each place in the itinerary:
+
+Hotel options:
+
+Hotel Name
+
+Hotel Address
+
+Price Range
+
+Hotel Image URL (if available)
+
+Geo Coordinates (if available)
+
+Rating (if available)
+
+Description
+
+Daily itinerary with places to visit:
+
+Place in $
+
+Place Details
+
+Place Image URL (if available)
+
+Geo Coordinates (if available)
+
+Ticket Pricing (if available)
+
+Rating (if available)
+
+Suggested Time to Spend
+
+Best Time to Visit
+
+give me data in json formate
+`

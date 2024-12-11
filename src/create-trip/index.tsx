@@ -53,7 +53,7 @@ const CreateTrip: React.FC = () => {
           {
             params: {
               input: userInput,
-              key: "AlzaSyi-F5cbWoQfNK-GNXLMcLNvF7DMKadAv3J", // Replace with your API key
+              key: import.meta.env.VITE_GOOGLE_PLACE_API_KEY, // Replace with your API key
             },
           }
         );
@@ -107,11 +107,11 @@ const CreateTrip: React.FC = () => {
     setLoading(true);
     const FINAL_PROMPT = AI_PROMPT.replace(
       "{destination}",
-      formData.destination
+      formData?.destination
     )
-      .replace("{days}", formData.days.toString()) // Ensure it's a string
-      .replace("{travelWith}", formData.travelWith)
-      .replace("{budget}", formData.budget);
+      .replace("{days}", formData?.days.toString()) // Ensure it's a string
+      .replace("{travelWith}", formData?.travelWith)
+      .replace("{budget}", formData?.budget);
 
     const result = await chatSession.sendMessage(FINAL_PROMPT);
     console.log(result?.response?.text());
