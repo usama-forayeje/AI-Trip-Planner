@@ -285,7 +285,7 @@ const CreateTrip: React.FC = () => {
           </DialogDescription>
 
           <div className="mt-6">
-            <Button className="flex items-center justify-center w-full gap-2" onClick={login}>
+            <Button className="flex items-center justify-center w-full gap-2"  onClick={() => { login(); }}>
               <UserCircle className="w-5 h-5" />
               Sign In With Google
             </Button>

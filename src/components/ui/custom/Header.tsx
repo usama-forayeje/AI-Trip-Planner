@@ -17,14 +17,23 @@ import { UserCircle, X, Loader } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
 
+// Defining the structure of the user data stored in localStorage
+interface User {
+  picture: string;
+  name: string;
+  email: string;
+}
+
 function Header() {
+  // States for managing dialog and loading state
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false); // Loading state
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user: User | null = JSON.parse(localStorage.getItem("user") || "null"); // Retrieving user data from localStorage
 
   useEffect(() => {
+    // For debugging purposes: logging the user object
     console.log(user);
-  }, []);
+  }, [user]);
 
   // Handle Google login
   const login = useGoogleLogin({
@@ -35,7 +44,7 @@ function Header() {
     },
   });
 
-  // Fetch user profile after Google login
+  // Fetch user profile after successful Google login
   const getUserProfile = async (tokenInfo: any) => {
     setLoading(true); // Start loading
     try {
@@ -48,15 +57,23 @@ function Header() {
           },
         }
       );
+      // Save user data to localStorage
       localStorage.setItem("user", JSON.stringify(res.data));
-      setOpenDialog(false);
-      window.location.reload();
+      setOpenDialog(false); // Close the dialog
+      window.location.reload(); // Reload the page to reflect the logged-in state
     } catch (err) {
       console.error(err);
       toast.error("Failed to fetch user profile. Please try again.");
     } finally {
       setLoading(false); // Stop loading
     }
+  };
+
+  // Handle Logout
+  const handleLogout = () => {
+    googleLogout(); // Logout from Google
+    localStorage.clear(); // Clear localStorage on logout
+    window.location.reload(); // Reload page after logout
   };
 
   return (
@@ -101,11 +118,7 @@ function Header() {
               <PopoverContent className="w-32">
                 <button
                   className="w-full px-4 py-2 text-sm text-left text-rose-600 hover:bg-gray-100"
-                  onClick={() => {
-                    googleLogout();
-                    localStorage.clear();
-                    window.location.reload();
-                  }}
+                  onClick={handleLogout}
                 >
                   Log Out
                 </button>
