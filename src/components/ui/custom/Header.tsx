@@ -82,7 +82,7 @@ function Header() {
       <div className="flex items-center gap-2">
         <img
           className="w-10 h-10 rounded-full"
-          src="/forayaje-ai-trip .jpg"
+          src="/forayaje-ai-trip.jpg" // Corrected the image path
           alt="logo"
         />
         <h2 className="font-serif text-lg font-bold">Forayaje AI Trip</h2>
@@ -143,7 +143,7 @@ function Header() {
           <DialogHeader className="flex flex-col items-center">
             <div className="flex items-center gap-3 mt-4">
               <img
-                src="/forayaje-ai-trip.jpg"
+                src="/forayaje-ai-trip.jpg" // Ensure the image path is correct
                 alt="Forayaje AI Logo"
                 className="w-16 h-16 rounded-full ring-2 ring-primary"
               />

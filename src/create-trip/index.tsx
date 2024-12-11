@@ -68,9 +68,10 @@ const CreateTrip: React.FC = () => {
     onSuccess: (res) => getUserProfile(res),
     onError: (error) => {
       console.error(error);
-      toast("Failed to login with Google. Please try again.");
+      toast.error("Failed to login with Google. Please try again.");
     },
   });
+  
 
   // Set selected suggestion and close the suggestions list
   const handleSuggestionClick = (description: string) => {
