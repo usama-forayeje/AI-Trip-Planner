@@ -58,8 +58,9 @@ function ViewTrip() {
 
       if (docSnap.exists()) {
         const data = docSnap.data();
+
+        // Validate if the data matches the TripData structure
         if (data) {
-          // Validate if the data matches the TripData structure
           const tripData = data as TripData;
           setTripData(tripData);
         } else {

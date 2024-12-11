@@ -35,14 +35,14 @@ function Header() {
     console.log(user);
   }, [user]);
 
-  // Handle Google login
-  const login = useGoogleLogin({
-    onSuccess: (res) => getUserProfile(res),
-    onError: (error) => {
-      console.error(error);
-      toast.error("Failed to login with Google. Please try again.");
-    },
-  });
+// Handle Google login
+const login = useGoogleLogin({
+  onSuccess: (res) => getUserProfile(res),
+  onError: (error) => {
+    console.error(error);
+    toast.error("Failed to login with Google. Please try again.");
+  },
+});
 
   // Fetch user profile after successful Google login
   const getUserProfile = async (tokenInfo: any) => {
@@ -162,7 +162,7 @@ function Header() {
           <div className="mt-6">
             <Button
               className="flex items-center justify-center w-full gap-2"
-              onClick={login}
+              onClick={() => login()}
               disabled={loading}
             >
               {loading ? (

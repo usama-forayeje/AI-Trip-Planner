@@ -1,4 +1,5 @@
-import { MapPin,  DollarSign, Timer } from "lucide-react";
+import React from "react";
+import { MapPin, DollarSign, Timer } from "lucide-react";
 
 type ItineraryDay = {
   placeName?: string;
@@ -12,18 +13,18 @@ type ItineraryDay = {
   };
 };
 
-type PlacesToVisitProps = {
-  tripData?: {
-    TripData?: {
-      itinerary?: {
-        [day: string]: ItineraryDay[];
-      };
-    };
+type TripData = {
+  itinerary?: {
+    [day: string]: ItineraryDay[];
   };
 };
 
-function PlacesToVisit({ tripData }: PlacesToVisitProps) {
-  const itinerary = tripData?.TripData?.itinerary;
+type PlacesToVisitProps = {
+  tripData: TripData; // Updated this to expect `tripData` as a direct prop.
+};
+
+const PlacesToVisit: React.FC<PlacesToVisitProps> = ({ tripData }) => {
+  const itinerary = tripData.itinerary;
 
   return (
     <div className="mt-10">
@@ -111,6 +112,6 @@ function PlacesToVisit({ tripData }: PlacesToVisitProps) {
       </div>
     </div>
   );
-}
+};
 
 export default PlacesToVisit;
